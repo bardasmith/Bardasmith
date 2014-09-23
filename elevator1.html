@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Elevator #2</title>
+ <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<style>
+body {
+	font-family:Arial, Helvetica, sans-serif;
+}
+#mainBlock {
+	margin:20px;
+	border-radius: 6px;
+	border:7px solid #000000;
+	width:490px; 
+	height:700px; 
+	overflow:hidden;
+	position:relative;
+	background-color:#CCC;
+	background-position:bottom;
+	background-repeat:repeat-x;
+	color:black;
+}
+
+.panel {
+	background-color: #000000;
+	margin-left:30px;
+	margin-top:30px;
+	width:430px;
+	height:250px;
+	color:#ffffff;
+	vertical-align:middle;
+	
+}
+
+.floornumber {
+	
+	font-size:150px;
+	line-height:150px;
+	position:relative;
+	top:50px;
+	left:50px;
+	height:150px;
+	width:150px;
+	overflow:hidden;
+	color:#ffffff;
+}
+.lightwrapper {
+	float:right;
+	position:relative;
+	top:-105px;
+	margin-right:50px;
+	height:170px;
+}
+.greenbox{
+	width:80px;
+	height:80px;
+	background-color:green;
+	
+}
+.redbox{
+	width:80px;
+	height:80px;
+	background-color:red;
+	margin-top:10px;
+	margin-left:1px;
+}
+
+
+.greenlit{
+	background: #b4e391; /* Old browsers */
+	background: -webkit-radial-gradient(circle, #b4e391, #a7ff00, green); /* For Safari 5.1 to 6.0 */
+    	background: -o-radial-gradient(circle, #b4e391, #a7ff00, green); /* For Opera 11.6 to 12.0 */
+    	background: -moz-radial-gradient(circle, #b4e391, #a7ff00, green);/* For Fx 3.6 to 15 */
+    	background: radial-gradient(circle, #b4e391, #a7ff00, green); /* Standard syntax (must be last) */
+}
+.redlit{
+
+	background: #efc5ca; /* Old browsers */
+	background: -webkit-radial-gradient(circle, #efc5ca, #ffA800, red); /* For Safari 5.1 to 6.0 */
+    	background: -o-radial-gradient(circle, #efc5ca, #ffA800, red); /* For Opera 11.6 to 12.0 */
+    	background: -moz-radial-gradient(circle, #efc5ca, #ffA800, red);/* For Fx 3.6 to 15 */
+    	background: radial-gradient(circle, #efc5ca, #ffA800, red); /* Standard syntax (must be last) */
+
+
+}
+
+
+.button {
+	background-color:white;
+	border:8px solid #000000;	
+	border-radius: 100px;
+	width:100px;
+	height:100px;
+	font-size:85px;
+	color:#000000;
+	text-align:center;
+	vertical-align:middle;
+	display:inline-block;
+	margin-left:58px;
+
+
+}
+.buttonclick {
+	background: yellow;  /*Old browsers */
+	background: -webkit-radial-gradient(circle, #efc5ca, #ffA800, #fffff); /* For Safari 5.1 to 6.0 */
+    	background: -o-radial-gradient(circle, #efc5ca, #ffA800, #fffff); /* For Opera 11.6 to 12.0 */
+    	background: -moz-radial-gradient(circle, #efc5ca, #ffA800, #fffff);/* For Fx 3.6 to 15 */
+    	background: radial-gradient(circle, #efc5ca, #ffA800, #fffff); /* Standard syntax (must be last) */
+	
+
+
+}
+.buttonnumber{
+	margin-top:35px;
+}
+
+.slidewrapper {
+
+}
+#slideContent {
+	
+}
+.buttonbox{
+
+	position: relative;
+	margin-top:70px;
+	left:30px;
+}
+#floorQ,#onfloor {
+	display:none; 
+}
+
+</style>
+
+</head>
+
+<body>
+<div id="onfloor">1</div>
+<div id="floorQ"></div>
+<div id="mainBlock">
+	<div class="panel">
+
+		<div class="floornumber">
+
+
+			<div id="slideContent">1</div>     
+
+		</div>
+		<div class="lightwrapper">
+ 			<div class="greenbox" id="greenbox">
+			</div>
+			<div class="redbox" id="redbox">
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="buttonbox">
+		<div class="button" id="floor3">3</div><div class="button" id="floor4">4</div>
+	</div>
+	<div class="buttonbox">
+
+		<div class="button" id="floor2">2</div>
+		<div class="button" id="floor1">1</div>
+	</div>
+</div>
+
+<script> 
+function buttonoff(buttonclicked) {
+    $(buttonclicked).removeClass( "buttonclick" );
+}
+var dfd = new $.Deferred();
+dfd.resolve();
+$(".button").click(function(event) {
+    var floorQ = $(this).text();
+    var buttonclicked = event.target.id;
+    buttonclicked="#"+buttonclicked;
+    $(buttonclicked).addClass( "buttonclick" );
+    $.when(dfd.promise()).done(function() {
+        dfd = new $.Deferred();
+        var onfloor = $("#onfloor").text();
+        runMainscript(buttonclicked, floorQ, onfloor);
+    });
+});
+function runMainscript(buttonclicked,floorQ,onfloor) {    
+    var delay = 2000;
+
+    var goingtofloor=floorQ;
+    
+
+    
+    if(goingtofloor > onfloor) {
+        $( ".greenbox" ).addClass( "greenlit" );
+        var upElevator = function(){
+            
+            $("#slideContent").text(onfloor);
+            if (onfloor == goingtofloor){
+                $( ".greenbox" ).removeClass( "greenlit" );
+                buttonoff(buttonclicked);
+                $("#onfloor").text(onfloor);
+                dfd.resolve();
+            }
+            if(onfloor++ < goingtofloor){
+                setTimeout(upElevator, delay);
+            }
+        }
+        upElevator();
+    } else if (onfloor > goingtofloor ) {
+        $( ".redbox" ).addClass( "redlit" );
+        var downElevator = function(){
+            $("#slideContent").text(onfloor);
+            if (onfloor == goingtofloor){
+                $( ".redbox" ).removeClass( "redlit" );	
+                buttonoff(buttonclicked);
+                $("#onfloor").text(onfloor);
+                dfd.resolve();
+            }
+            if(onfloor-- > goingtofloor){
+                setTimeout(downElevator, delay);
+            }
+        }
+        downElevator();
+    }else {	
+        //do nothing if the button is the same as current floor, except turn off the light and resolve deferred. 
+	buttonoff(buttonclicked);
+	dfd.resolve();
+    }
+}
+</script>
+
+</body>
+
+</html> </button>
+</body>
+</html>
